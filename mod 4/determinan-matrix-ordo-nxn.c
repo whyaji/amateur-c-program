@@ -10,7 +10,6 @@ int main()
     int i, j;           //dimensi array
     float n;            //batas array
     float d;            //determinan
-    int lagi = 0;
 
     while (size == 0)
     {
