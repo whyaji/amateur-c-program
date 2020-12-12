@@ -65,7 +65,6 @@ int main()
             }
         }
     }
-    //printf("\nhasil inputan : %.2f\n", a[1][1]);
      
     printf("\nhasil inputan :\n");
 
