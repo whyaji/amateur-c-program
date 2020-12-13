@@ -63,7 +63,11 @@ int main()
             }
             break;
 
+        case 4:
+            break;
+
         default:
+            printf("Menu tidak ada\n");
             break;
         }
     }
@@ -80,6 +84,9 @@ char inputUsername(int j, char username[20], char unP[j][2][20])
         int symbolH = 0;
         int c;
         int nSym = 1;
+        int uList;
+        int x;
+        int jUn;
 
         for (int i = 0; i < strlen(username); ++i)
         {
@@ -98,6 +105,22 @@ char inputUsername(int j, char username[20], char unP[j][2][20])
             }
         }
 
+        uList = j;
+        jUn = 0;
+        for (int i = 1; i <= uList; i++)
+        {
+            jUn++;
+            x = strcmp(username, unP[jUn][0]);
+            if (x == 0)
+            {
+                break;
+            }
+            else
+            {
+                continue;
+            }
+        }
+
         if (strlen(username) < 7)
         {
             printf("\nPanjang Username harus lebih dari 6 karakter\n");
@@ -107,6 +130,12 @@ char inputUsername(int j, char username[20], char unP[j][2][20])
         if (nSym == 0)
         {
             printf("\nUsername Tidak Boleh ada Special Karakter\n");
+            reg = 0;
+            continue;
+        }
+        if (x == 0)
+        {
+            printf("Username sudah terpakai, Tidak boleh ada duplikasi username\n");
             reg = 0;
             continue;
         }
@@ -127,7 +156,6 @@ char inputPassword(int j, char password[20], char pwP[j][2][20])
         scanf(" %[^\n]", password);
 
         int symbolHp = 0, kapitalHp = 0, kecilHp = 0, angkaHp = 0;
-        int symbol = 0, kapital = 0, kecil = 0, angka = 0;
         int jmlSyarat = 0;
         int cP;
 
@@ -141,37 +169,21 @@ char inputPassword(int j, char password[20], char pwP[j][2][20])
                 cP >= 123 && cP <= 127)
             {
                 symbolHp = 1;
-                if (symbolHp == 1)
-                {
-                    symbol = symbolHp;
-                }
             }
 
             if (cP >= 65 && cP <= 90)
             {
                 kapitalHp = 1;
-                if (kapitalHp == 1)
-                {
-                    kapital = kapitalHp;
-                }
             }
 
             if (cP >= 97 && cP <= 122)
             {
                 kecilHp = 1;
-                if (kecilHp == 1)
-                {
-                    kecil = kecilHp;
-                }
             }
 
             if (cP >= 49 && cP <= 57)
             {
                 angkaHp = 1;
-                if (angkaHp == 1)
-                {
-                    angka = angkaHp;
-                }
             }
         }
 
@@ -192,7 +204,7 @@ char inputPassword(int j, char password[20], char pwP[j][2][20])
             kP++;
         }
 
-        jmlSyarat = symbol + kapital + kecil + angka;
+        jmlSyarat = symbolHp + kapitalHp + kecilHp + angkaHp;
 
         if (strlen(password) < 9)
         {
@@ -228,7 +240,6 @@ char kodeUser(int j, char unP[j][2][20], char kode[j][20])
     {
         urutan[i] = i;
     }
-    memset(tigaH, '\0', sizeof(tigaH));
     strncpy(tigaH, unP[j][0], sizeof(tigaH));
     snprintf(kode[j], sizeof(kode[20]), "%.3s-%.4d", strupr(tigaH), urutan[j]);
 }
@@ -236,7 +247,7 @@ char kodeUser(int j, char unP[j][2][20], char kode[j][20])
 char login(int j, char unP[j][2][20], char pwP[j][2][20], char kode[j][20])
 {
     char iUsername[20], iPassword[20];
-    int x, y;
+    int x, y, u = 1, p;
     int sukses;
     int jLog, jIn;
 
@@ -260,8 +271,11 @@ char login(int j, char unP[j][2][20], char pwP[j][2][20], char kode[j][20])
         {
             jIn++;
             x = strcmp(iUsername, kode[jIn]);
-            if (x == 0)
+            y = strcmp(iUsername, unP[jIn][0]);
+
+            if (x == 0 || y == 0)
             {
+                u = 0;
                 break;
             }
             else
@@ -269,8 +283,9 @@ char login(int j, char unP[j][2][20], char pwP[j][2][20], char kode[j][20])
                 continue;
             }
         }
-        y = strcmp(iPassword, pwP[jIn][1]);
-        if (x == 0 && y == 0)
+
+        p = strcmp(iPassword, pwP[jIn][1]);
+        if (u == 0 && p == 0)
         {
             printf("SELAMAT DATANG %s\n", unP[jIn][0]);
             printf("== LIST DATA ==\n");
