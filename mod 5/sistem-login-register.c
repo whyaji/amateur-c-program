@@ -1,302 +1,267 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-char inputUsername(int j, char username[20], char unP[j][2][20]);
-char inputPassword(int j, char password[20], char pwP[j][2][20]);
-char kodeUser(int j, char unP[j][2][20], char kode[j][20]);
-char login(int j, char unP[j][2][20], char pwP[j][2][20], char kode[j][20]);
+char fUser[20], fPass[20], fKode[20];
+
+char registrasi();
+int inputUsername(char username[20]);
+int inputPassword(char password[20]);
+void kodeUser(int j, char username[20], char kode[20]);
+char listData();
+char login();
+
+FILE *fDList;
 
 int main()
 {
     int menu;
-    int j;
-    char user[20], pass[20];
-    char userP[20][2][20], passP[20][2][20];
-    char kode[j][20];
-    int jList;
+    char cM[64];
 
-    while (menu != 4)
+    printf("MENU\n 1. Registrasi\n 2. Login\n 3. Tampilkan semua data\n 4. EXIT\nPILIH MENU : ");
+    fgets(cM, sizeof(cM), stdin);
+    if (*cM < '1' || *cM > '4')
     {
-        printf("MENU\n 1. Registrasi\n 2. Login\n 3. Tampilkan semua data\n 4. EXIT\n");
-        printf("PILIH MENU : ");
-        scanf("%d", &menu);
-
-        switch (menu)
-        {
-        case 1:
-            j++;
-            printf("==REGISTRASI==\n");
-
-            inputUsername(j, user, userP);
-            inputPassword(j, pass, passP);
-            kodeUser(j, userP, kode);
-
-            printf("Username berhasil didaftarkan\n");
-            printf(" Username : %s\n", userP[j][0]);
-            printf(" Password : %s\n", passP[j][1]);
-            printf(" Kode User : %s\n", kode[j]);
-
-            break;
-
-        case 2:
-            printf("==LOGIN==\n");
-
-            login(j, userP, passP, kode);
-
-            break;
-
-        case 3:
-            printf("== LIST DATA ==\n");
-            if (j == 0)
-            {
-                printf("Belum ada data teregister\n");
-                break;
-            }
-            jList = j;
-            j = 0;
-            for (int i = 1; i <= jList; i++)
-            {
-                j++;
-                printf("== %d ==\n", i);
-                printf(" Username : %s\n", userP[j][0]);
-                printf(" Kode User : %s\n", kode[j]);
-            }
-            break;
-
-        case 4:
-            break;
-
-        default:
-            printf("Menu tidak ada\n");
-            break;
-        }
+        printf("Menu tidak ada\n\n");
+        main();
     }
+    if (strlen(cM) > 2)
+    {
+        printf("Menu tidak ada\n\n");
+        main();
+    }
+    else
+    {
+        sscanf(cM, "%d", &menu);
+    }
+
+    switch (menu)
+    {
+    case 1:
+        registrasi();
+        main();
+
+    case 2:
+        login();
+        main();
+
+    case 3:
+        listData();
+        main();
+
+    case 4:
+        exit(0);
+    }
+    return 0;
 }
 
-char inputUsername(int j, char username[20], char unP[j][2][20])
+char registrasi()
 {
-    int reg = 0;
-    while (reg == 0)
+    int j = 1;
+    char username[20], password[20];
+    char kode[20];
+
+    printf("==REGISTRASI==\n");
+    printf("Input Username : ");
+    gets(username);
+    printf("Input Password : ");
+    gets(password);
+
+    if (inputUsername(username) + inputPassword(password) == 2)
     {
-        printf("Input Username : ");
-        scanf(" %[^\n]", username);
-
-        int symbolH = 0;
-        int c;
-        int nSym = 1;
-        int uList;
-        int x;
-        int jUn;
-
-        for (int i = 0; i < strlen(username); ++i)
+        fDList = fopen("listdata.txt", "a+");
+        while (fscanf(fDList, "%s %s %s", fUser, fPass, fKode) != EOF)
         {
-            c = username[i];
-            if (c >= 0 && c <= 45 || c == 47 ||
-                c >= 58 && c <= 64 ||
-                c >= 91 && c <= 96 ||
-                c >= 123 && c <= 127)
-            {
-                symbolH = 1;
-            }
-            if (symbolH != 0)
-            {
-                nSym = 0;
-                break;
-            }
+            j++;
         }
+        kodeUser(j, username, kode);
+        printf("Username berhasil didaftarkan\n");
+        printf(" Username : %s\n Password : %s\n Kode User : %s\n\n", username, password, kode);
+        fprintf(fDList, "%s %s %s\n", username, password, kode);
+        fclose(fDList);
+    }
+    else
+    {
+        printf("\n");
+    }   
+}
 
-        uList = j;
-        jUn = 0;
-        for (int i = 1; i <= uList; i++)
-        {
-            jUn++;
-            x = strcmp(username, unP[jUn][0]);
-            if (x == 0)
-            {
-                break;
-            }
-            else
-            {
-                continue;
-            }
-        }
-
+int inputUsername(char username[20])
+{
+    int x = 0;
+    for(;;)
+    {
         if (strlen(username) < 7)
         {
-            printf("\nPanjang Username harus lebih dari 6 karakter\n");
-            reg = 0;
-            continue;
+            printf("Panjang Username harus lebih dari 6 karakter\n");
+            break;
         }
-        if (nSym == 0)
+
+        int symbolH = 0;
+        for (int i = 0; i < strlen(username); ++i)
         {
-            printf("\nUsername Tidak Boleh ada Special Karakter\n");
-            reg = 0;
-            continue;
+            if (username[i] >= 0 && username[i] <= 45 || username[i] == 47 ||
+                username[i] >= 58 && username[i] <= 64 ||
+                username[i] >= 91 && username[i] <= 96 ||
+                username[i] >= 123 && username[i] <= 127)
+            {
+                symbolH++;
+            }
         }
-        if (x == 0)
+        if (symbolH != 0)
+        {
+            printf("Username Tidak Boleh ada Special Karakter\n");
+            break;
+        }
+
+        int duplikat = 0;
+        fDList = fopen("listdata.txt", "r");
+        while (fscanf(fDList, "%s %s %s", fUser, fPass, fKode) != EOF)
+        {
+            if (strcmp(fUser, username) == 0)
+            {
+                duplikat++;
+                break;
+            }
+        }
+        fclose(fDList);
+        if (duplikat != 0)
         {
             printf("Username sudah terpakai, Tidak boleh ada duplikasi username\n");
-            reg = 0;
-            continue;
+            break;
         }
         else
         {
-            strcpy(unP[j][0], username);
+            x++;
             break;
         }
     }
+    return x;
 }
 
-char inputPassword(int j, char password[20], char pwP[j][2][20])
+int inputPassword(char password[20])
 {
-    int pas = 0;
-    while (pas == 0)
+    int y = 0;
+    for(;;)
     {
-        printf("Input Password : ");
-        scanf(" %[^\n]", password);
+        if (strlen(password) < 9)
+        {
+            printf("Panjang Password harus lebih dari 8 karakter\n");
+            break;
+        }
 
         int symbolHp = 0, kapitalHp = 0, kecilHp = 0, angkaHp = 0;
-        int jmlSyarat = 0;
-        int cP;
-
         for (int i = 0; i < strlen(password); ++i)
         {
-            cP = password[i];
-            if (cP >= 0 && cP <= 31 ||
-                cP >= 33 && cP <= 47 ||
-                cP >= 58 && cP <= 64 ||
-                cP >= 91 && cP <= 96 ||
-                cP >= 123 && cP <= 127)
-            {
-                symbolHp = 1;
-            }
-
-            if (cP >= 65 && cP <= 90)
+            if (password[i] >= 'A' && password[i] <= 'Z')
             {
                 kapitalHp = 1;
             }
-
-            if (cP >= 97 && cP <= 122)
+            if (password[i] >= 'a' && password[i] <= 'z')
             {
                 kecilHp = 1;
             }
-
-            if (cP >= 49 && cP <= 57)
+            if (password[i] >= '0' && password[i] <= '9')
             {
                 angkaHp = 1;
             }
-        }
-
-        int iP, kP, hP;
-        int palindrome = 0;
-
-        hP = strlen(password);
-        iP = hP - 1;
-        kP = 0;
-
-        while (iP > kP)
-        {
-            if (password[iP] == password[kP])
-            {
-                palindrome++;
-            }
-            iP--;
-            kP++;
-        }
-
-        jmlSyarat = symbolHp + kapitalHp + kecilHp + angkaHp;
-
-        if (strlen(password) < 9)
-        {
-            printf("\nPanjang Password harus lebih dari 8 karakter\n");
-            pas = 0;
-            continue;
-        }
-        if (jmlSyarat != 4)
-        {
-            printf("\nPassword Harus menyertakan minium 1 huruf kecil (a-z), 1 huruf kapital(A-Z), 1 angka(1-9), dan 1 special karakter (!@#$^&*().,)\n");
-            pas = 0;
-            continue;
-        }
-        if (palindrome == hP / 2)
-        {
-            printf("\nPassword Tidak boleh berbentuk Palindrome\n");
-            pas = 0;
-            continue;
-        }
-        else
-        {
-            strcpy(pwP[j][1], password);
-            break;
-        }
-    }
-}
-
-char kodeUser(int j, char unP[j][2][20], char kode[j][20])
-{
-    char tigaH[3];
-    int urutan[20];
-    for (int i = 1; i <= 20; i++)
-    {
-        urutan[i] = i;
-    }
-    strncpy(tigaH, unP[j][0], sizeof(tigaH));
-    snprintf(kode[j], sizeof(kode[20]), "%.3s-%.4d", strupr(tigaH), urutan[j]);
-}
-
-char login(int j, char unP[j][2][20], char pwP[j][2][20], char kode[j][20])
-{
-    char iUsername[20], iPassword[20];
-    int x, y, u = 1, p;
-    int sukses;
-    int jLog, jIn;
-
-    sukses = 0;
-    while (sukses == 0)
-    {
-        if (j == 0)
-        {
-            printf("Belum ada data teregister\n");
-            sukses = 1;
-            break;
-        }
-        printf("Input Username : ");
-        scanf(" %[^\n]", iUsername);
-        printf("Input Password : ");
-        scanf(" %[^\n]", iPassword);
-
-        jLog = j;
-        jIn = 0;
-        for (int i = 1; i <= jLog; i++)
-        {
-            jIn++;
-            x = strcmp(iUsername, kode[jIn]);
-            y = strcmp(iUsername, unP[jIn][0]);
-
-            if (x == 0 || y == 0)
-            {
-                u = 0;
-                break;
-            }
             else
             {
-                continue;
+                symbolHp = 1;
             }
         }
-
-        p = strcmp(iPassword, pwP[jIn][1]);
-        if (u == 0 && p == 0)
+        if (symbolHp + kapitalHp + kecilHp + angkaHp != 4)
         {
-            printf("SELAMAT DATANG %s\n", unP[jIn][0]);
-            printf("== LIST DATA ==\n");
-            printf(" Username : %s\n", unP[jIn][0]);
-            printf(" Kode User : %s\n", kode[jIn]);
-            sukses = 1;
+            printf("Password Harus menyertakan minium 1 huruf kecil, 1 huruf kapital, 1 angka, dan 1 special karakter\n");
+            break;
+        }
+
+        char passRev[20];
+        strcpy(passRev, password);
+        if (strcmp(strrev(passRev), password) == 0)
+        {
+            printf("Password Tidak boleh berbentuk Palindrome\n");
+            break;
         }
         else
         {
-            printf("Username dan password salah\n");
-            sukses = 0;
+            y++;
+            break;
         }
     }
+    return y;
+}
+
+void kodeUser(int j, char username[20], char kode[20])
+{
+    char tigaH[3];
+    int urutan[100];
+    urutan[j] = j;
+
+    strcpy(tigaH, username);
+    sprintf(kode, "%.3s-%.4d", strupr(tigaH), urutan[j]);
+}
+
+char listData()
+{
+	int j = 1;
+	fDList = fopen("listdata.txt", "r");
+	printf("== LIST DATA ==\n");
+
+    if (!fDList)
+    {
+        printf("Belum ada data teregister\n\n");
+        main();
+    }
+
+	while (fscanf(fDList, "%s %s %s", fUser, fPass, fKode) != EOF)
+	{
+		printf("== %d ==\nUsername : %s\nKode User : %s\n", j, fUser, fKode);
+		j++;
+	}
+	printf("\n");
+	fclose(fDList);
+}
+
+char login()
+{
+    char iUsername[20], iPassword[20];
+    int sukses = 0;
+
+    printf("==LOGIN==\n");
+
+    fDList = fopen("listdata.txt", "r");
+
+    if (!fDList)
+    {
+        printf("Belum ada data teregister\n\n");
+        main();
+    }
+    
+    printf("Input Username : ");
+    gets(iUsername);
+    printf("Input Password : ");
+    gets(iPassword);
+
+	while (fscanf(fDList, "%s %s %s", fUser, fPass, fKode) != EOF)
+	{
+		if ((strcmp(fKode, iUsername) == 0 || strcmp(fUser, iUsername) == 0) && strcmp(fPass, iPassword) == 0)
+		{
+			sukses = 1;
+			break;
+		}
+	}
+
+	if (sukses == 1)
+	{
+		printf("Selamat datang %s\n", fUser);
+		printf("== Data anda ==\n");
+		printf("Username : %s\n", fUser);
+		printf("Kode User : %s\n\n", fKode);
+	}
+	else
+	{
+		printf("User atau Password anda salah!\n\n");
+	}
+    fclose(fDList);
 }
