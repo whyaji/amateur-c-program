@@ -481,7 +481,7 @@ void deleteAkun()
             remove("listdata.txt");
             printf("\nDan semua data telah dihapus\n\n");
         }
-        
+
         main();
     }
     else
@@ -535,7 +535,7 @@ void delEdiAkun(char bUser[20], char bPass[20], char bKode[20])
     strcpy(aKode, bKode);
 }
 
-void delete ()
+void delete()
 {
     char kPass[20];
     printf("\nApakah anda yakin ingin menghapus semua data user? jika anda yakin\n");
