@@ -16,7 +16,7 @@ void akunAnda();
 void editAkun();
 void deleteAkun();
 void delEdiAkun(char bUser[20], char bPass[20], char bKode[20]);
-void delete ();
+void deleteData();
 
 FILE *fDList;
 FILE *fDTemp;
@@ -356,7 +356,7 @@ void mainUser()
         mainUser();
 
     case 4:
-        delete ();
+        deleteData();
         main();
     }
 }
@@ -535,7 +535,7 @@ void delEdiAkun(char bUser[20], char bPass[20], char bKode[20])
     strcpy(aKode, bKode);
 }
 
-void delete()
+void deleteData()
 {
     char kPass[20];
     printf("\nApakah anda yakin ingin menghapus semua data user? jika anda yakin\n");
