@@ -497,31 +497,21 @@ void delEdiAkun(char bUser[20], char bPass[20], char bKode[20])
     while (!feof(fDList))
     {
         fscanf(fDList, "%d %s %s %s\n", &fUrutan, fUser, fPass, fKode);
+        if (fUrutan == fUrutan - 1)
+        {
+            break;
+        }
+        
         if (fUrutan == aUrutan)
         {
             if (strcmp(kosong, fUser) != 0)
             {
-                break;
+                fprintf(fDTemp, "%d %s %s %s\n", aUrutan, bUser, bPass, bKode);
             }
         }
-        fprintf(fDTemp, "%d %s %s %s\n", fUrutan, fUser, fPass, fKode);
-    }
-    fclose(fDList);
-    fclose(fDTemp);
-
-    fDList = fopen("listdata.txt", "r");
-    fDTemp = fopen("lotemp.txt", "a+");
-    fprintf(fDTemp, "%d %s %s %s\n", aUrutan, bUser, bPass, bKode);
-    while (!feof(fDList))
-    {
-        fscanf(fDList, "%d %s %s %s\n", &fUrutan, fUser, fPass, fKode);
-        if (fUrutan > aUrutan)
+        else
         {
             fprintf(fDTemp, "%d %s %s %s\n", fUrutan, fUser, fPass, fKode);
-            if (fUrutan == fUrutan - 1)
-            {
-                break;
-            }
         }
     }
     fclose(fDList);
